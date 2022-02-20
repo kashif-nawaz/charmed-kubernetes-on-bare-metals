@@ -121,6 +121,7 @@ ls /etc/osinfo/
 * Keep an eye on Maas VMs' console from a separate terminal, and once console logs show that user config has been pushed via cloud-init, try to login into the MaaS VM and check if everything is configured as expected (e.g. hostname, IP connectivity, Internet access, etc).
 
 ### Installing MaaS
+* Acknowledgment I got some help on the latest MaaS version installation and adding it to Juju from [core-k8s-deployment](https://github.com/antongisli/maas-baremetal-k8s-tutorial/blob/main/maas-setup.sh).
 ```
 sudo snap switch --channel=latest/stable lxd
 sudo snap install lxd
