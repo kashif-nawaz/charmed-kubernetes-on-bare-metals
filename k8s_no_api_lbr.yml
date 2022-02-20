@@ -1,0 +1,132 @@
+series: focal
+variables:
+  oam-space:           &oam-space      oam-space
+  customize-failure-domain:    &customize-failure-domain    True
+machines:
+  "0":
+    constraints: tags=ceph-node-1
+    series: focal
+  "1":
+    constraints: tags=ceph-node-2
+    series: focal
+  "2":
+    constraints: tags=ceph-node-3
+    series: focal
+  "3":
+    constraints: tags=master
+    series: focal
+  "4":
+    constraints: tags=worker1
+    series: focal
+  "5":
+    constraints: tags=worker2
+    series: focal
+ 
+applications:
+  ceph-mon:
+    charm: cs:ceph-mon
+    num_units: 3
+    bindings:
+      "": *oam-space
+      public: *oam-space
+      osd: *oam-space
+    options:
+      monitor-count: 3
+      expected-osd-count: 3
+      customize-failure-domain: *customize-failure-domain
+      source: cloud:focal-wallaby
+    to:
+    - lxd:3
+    - lxd:4
+    - lxd:5
+  ceph-osd:
+    charm: cs:ceph-osd
+    num_units: 3
+    bindings:
+      "": *oam-space
+      public: *oam-space
+      cluster: *oam-space
+    options:
+      osd-devices: /dev/vdb
+      source: cloud:focal-wallaby
+      aa-profile-mode: complain
+      customize-failure-domain: *customize-failure-domain
+      autotune: false
+      bluestore: true
+      osd-encrypt: True
+    to:
+    - '0'
+    - '1'
+    - '2'
+  easyrsa:
+    series: "focal"
+    charm: cs:~containers/easyrsa
+    num_units: 1
+    annotations:
+      gui-x: '1168.1039428710938'
+      gui-y: '-59.11077045466004'
+    to:
+    - lxd:3
+  etcd:
+    series: "focal"
+    charm: cs:~containers/etcd
+    annotations:
+      gui-x: '1157.2041015625'
+      gui-y: '719.1614406201691'
+    num_units: 1
+    options:
+      channel: 3.2/stable
+    to: [3]
+  kubernetes-master:
+    series: "focal"
+    charm: cs:~containers/kubernetes-master
+    annotations:
+      gui-x: '877.1133422851562'
+      gui-y: '325.6035540382413'
+    expose: true
+    num_units: 1
+    options:
+      service-cidr: '10.96.0.0/12'
+    to: [3]
+  kubernetes-worker:
+    series: "focal"
+    charm: cs:~containers/kubernetes-worker
+    annotations:
+      gui-x: '745.8510131835938'
+      gui-y: '-57.369691124215706'
+    num_units: 2
+    to:
+    - 4
+    - 5
+  flannel:
+    series: "focal"
+    charm: cs:~containers/flannel
+  containerd:
+    series: "focal"
+    runtime: "auto"
+    charm: cs:~containers/containerd
+
+  ntp:
+    charm: "cs:focal/ntp"
+    annotations:
+      gui-x: '678.6017761230469'
+      gui-y: '415.27124759750086'
+relations:
+  -  [ "ceph-osd:mon", "ceph-mon:osd" ]
+  -  [ "kubernetes-master:kube-api-endpoint", "kubernetes-worker:kube-api-endpoint" ]
+  -  [ "kubernetes-master:kube-control", "kubernetes-worker:kube-control" ]
+  -  [ "kubernetes-master:certificates", "easyrsa:client" ]
+  -  [ "kubernetes-master:etcd", "etcd:db" ]
+  -  [ "kubernetes-worker:certificates",  "easyrsa:client" ]
+  -  [ "etcd:certificates", "easyrsa:client" ]
+  -  [ "ceph-mon:admin", "kubernetes-master" ]
+  -  [ "ceph-mon:client", "kubernetes-master" ]
+  -  [ "kubernetes-master", "ntp" ]
+  -  [ "kubernetes-worker", "ntp" ]
+  -  [ "ceph-osd:juju-info", "ntp:juju-info" ]
+  -  [ "flannel:cni", "kubernetes-master:cni" ]
+  -  [ "flannel:cni", "kubernetes-worker:cni" ]
+  -  [ "flannel:etcd", "etcd:db" ]
+  -  [ "containerd:containerd", "kubernetes-worker:container-runtime" ]
+  -  [ "containerd:containerd", "kubernetes-master:container-runtime" ]
+
