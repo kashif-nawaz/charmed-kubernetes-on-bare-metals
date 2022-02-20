@@ -150,7 +150,7 @@ echo $IP_ADDRESS
 * In order to finish, you need to login to the MaaS GUI at http://$MASS_VM_IP_ADDRESS:5240/MAAS/ and go through some steps to finish the MaaS setup process (unfortunately, I did capture those screens, so I am not adding those screens. 
 
 ### Network Setup in MaaS
-* I am only using a single network deployment in my lab (change the following values as per your setup).
+* I am using a single network deployment in my lab (change the following values as per your setup).
 ```
 export SUBNET=192.168.24.0/24
 export FABRIC_ID=$(maas admin subnet read "$SUBNET" | jq -r ".vlan.fabric_id")
@@ -167,7 +167,7 @@ maas admin vlan update  $FABRIC_ID $VLAN_TAG space=oam-space
 
 ### Juju-Controller Setup 
 #### Creating Juju-Controller VM
-* IOn my control-host, I created a Juju-Controller VM (KVM host also hots my maas VM, see Physical Design Section above).
+* On my control-host, I created a Juju-Controller VM (KVM host also hosts my MaaS VM, see Physical Design Section above).
 
 ```
 for i in   juju-controller 
@@ -188,6 +188,7 @@ power_type=virsh \
 power_parameters_power_id=juju-controller \
 power_parameters_power_address=qemu+ssh://devops@<IP address of my control-host>/system \
 power_parameters_power_pass=<password>
+
 JUJU_TAG=$(maas admin machines read | jq  '.[]| select(."hostname"=="juju-controller") | .["tag_names"]' | tr -d '"')
 JUJU_SYSID=$(maas admin machines read | jq  '.[]| select(."hostname"=="juju-controller") | .["system_id"]' | tr -d '"')
 maas admin tag update-nodes "juju-controller" add=$JUJU_SYSID
@@ -256,10 +257,10 @@ juju gui
 * Login to Juju GUI by using the output obtained from the above command.
 
 ### Adding Baremetal Servers Into MaaS
-* I am using Dell R720 machines and an IDRAC user name and password are required for this sequence.
+* I am using Dell R720 machines and IDRAC user name and password are required for this sequence.
 * The 192.168.100.0/24 subnet belongs to the IPMI Network in my lab. Change it as per your setup.
 * I have also enabled pxe boot on one of the onboard NICs, and the MAC address for that NIC will be used in the following commands.
-* The PXE boot nic must not be vlan tagged on the network.
+* The PXE boot NIC must not be vlan tagged on the network.
 ```
 
 maas admin machines create \
@@ -380,8 +381,8 @@ maas admin tag update-nodes "ceph-node-3" add=$SYSID
 
 ### Deployment of Charmed K8s
 * The last step is to deploy Charmed K8s.
-* I have created a k8s_no_api_lbr.yml bundle file for my deployment.
-* Take note of the tags and machine numbering in the k8s_no_api_lbr.yml bundle files, as well as how they are referred to in application deployments.
+* I have created a bundle file i.e "k8s_no_api_lbr.yml"  for this deployment.
+* Take note of the tags and machine numbering in the bundle file, as well as how they are referred for application deployments.
 ```
 juju deploy ./k8s_no_api_lbr.yml
 ```
@@ -399,5 +400,5 @@ juju ssh 3 kubectl get pods --all-namespaces
  2022-02-20 00:30:35 WARNING unit.kubernetes-master/0.certificates-relation-changed logger.go:60 ERROR cannot open 6443/tcp (unit "kubernetes-master/0"): port range conflicts with 6443/tcp (unit "kubeapi-load-balancer/0")
  cannot open 6443/tcp (unit "kubeapi-load-balancer/1"): port range conflicts with 6443/tcp (unit "kubernetes-master/0")
 ```
-* If anyone knows the solution to the above issue, then please contact me at "kashif-nawaz@outlook.com".
-* If anyone wants to collaborate with me on this project or the next one, which is "Adding Multus Meta CNI with SRIOV on Baremetal Charmed K8s" then please contact me at my above given email address.
+* If anyone knows the solution to the above issue and willing to share, then you may contact me at "kashif-nawaz@outlook.com".
+* If anyone wants to collaborate with me on this project or the next one, which is "Adding Multus Meta CNI with SRIOV on Baremetal Charmed K8s" then you may  contact me at above given email address.
