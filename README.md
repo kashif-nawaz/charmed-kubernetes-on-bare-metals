@@ -91,7 +91,7 @@ EOF
 cloud-localds -v  /home/devops/maas/cloud_init.img /home/devops/maas/cloud_init.cfg
 ```
 
-#### Inititing VM Creation
+#### Initiating MaaS VM Creation
 
 ```
 qemu-img create -b /home/devops/maas/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img  -f qcow2 -F qcow2 /var/lib/libvirt/images/maas.qcow2 200G
