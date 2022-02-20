@@ -7,7 +7,7 @@ Many telecom providers have adapted the containerized network functions model an
 * But deploying nested containers inside VMs brought some challenges related to performance and  extension of multiple interfaces to the  containerized network functions (e.g., adding 1 interface for control plane functionality and 1 or more interfaces for data-plane functionality).
 ## Solution
 * To resolve challenges that are centered around performance, K8s or Openshift have to be installed on baremetal servers.
-* To resolve network challenges, Multus (AK Meta CNI) should be used, which can work with any CNI (e.g., Flanel or Calico to provide control plan interface) and use SRIOV virtual functions for data plane interface. 
+* To resolve network challenges, Multus (aka Meta CNI) should be used, which can work with any CNI (e.g., Flanel or Calico to provide control plane interface) and use SRIOV virtual functions for data plane interface. 
 * In this wiki I will cover barematal K8s deployment by using Canonical MaaS (Metal as a Service) and Juju.
 * The use of Multus CNI in conjunction with Flannel and SRIOV VFs will be discussed in another wiki.
 
@@ -107,10 +107,8 @@ virt-install --name maas \
   --console pty,target_type=serial
 ```
 * If in case you get an error that Ubuntu 20.04 varients is not found then use the following sequence.
-
+[20.04-varient-error](https://askubuntu.com/questions/1103662/distro-ubuntu18-04-does-not-exist-in-our-dictionary)
 ```
---------if os-variant not found error received---
-[20.04 varient error](https://askubuntu.com/questions/1103662/distro-ubuntu18-04-does-not-exist-in-our-dictionary)
 apt install osinfo-db-tools -y
 wget https://releases.pagure.org/libosinfo/osinfo-db-20211013.tar.xz
 osinfo-db-import -v osinfo-db-20211013.tar.xz
@@ -120,7 +118,7 @@ ls /etc/osinfo/
 * Keep an eye on Maas VMs' console from a separate terminal, and once console logs show that user config has been pushed via cloud-init, try to login into the MaaS VM and check if everything is configured as expected (e.g. hostname, IP connectivity, Internet access, etc).
 
 ### Installing MaaS
-* Acknowledgment I got some help on the latest MaaS version installation and adding it to Juju from [core-k8s-deployment](https://github.com/antongisli/maas-baremetal-k8s-tutorial/blob/main/maas-setup.sh).
+* Acknowledgment; I got some help on the latest MaaS version installation and adding it to Juju from [core-k8s-deployment](https://github.com/antongisli/maas-baremetal-k8s-tutorial/blob/main/maas-setup.sh).
 ```
 sudo snap switch --channel=latest/stable lxd
 sudo snap install lxd
