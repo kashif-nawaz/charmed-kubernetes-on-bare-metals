@@ -4,10 +4,10 @@
 * This approach worked well for quite some time until NF vendors started adapting containerized technologies and container-based network fucntions are called CNF.
 Many telecom providers have adapted the containerized network functions model and used their IaaS projects (e.g., Opnestack or VMWare-based ) for CNF nested deployment over VMs.
 * Main projects for handling the infrastructure requirements of CNFs are ( Kubernetees, also known as K8s and Redhat Openshift which is again based on k8s).
-*  Deploying nested containers inside VMs introduce some more challenges (e.g performance concerns  and  extension of multiple interfaces to the  containerized network functions  where  at least one interface is control plane functionality and one or more interfaces  are required for data-plane functionality).
+*  Deploying nested containers inside VMs introduce some more challenges (e.g performance concerns  and  extension of multiple interfaces to the  containerized network functions, with requriments of one interface for control plane functionality and one or more interfaces for data-plane functionality).
 ## Solution
 * To resolve challenges that are centered around performance, K8s or Openshift have to be installed on baremetal servers.
-* To resolve network challenges, Multus (aka Meta CNI) should be used, which can work with any CNI (e.g., Flanel or Calico to provide control plane interface) and use SRIOV virtual functions for data plane interface. 
+* To resolve network challenges, Multus (aka Meta CNI) should be used, which can work with any CNI (e.g., Flanel or Calico to provide control plane interface) and use SRIOV virtual functions for data plane interfaces. 
 * In this wiki I will cover barematal K8s deployment by using Canonical MaaS (Metal as a Service) and Juju.
 * The use of Multus CNI in conjunction with Flannel and SRIOV VFs will be discussed in another wiki.
 
