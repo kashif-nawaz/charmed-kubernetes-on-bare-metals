@@ -20,8 +20,7 @@ Many telecom providers have adopted the containerized network functions model an
 ## Deployment Sequence
 * It is expected that the control-host is up and running, has internet access and is ready to host KVM VMs.
 ### Creating MaaS VM
-* I have downloaded ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img image from [cloud-images](http://cloud-images-archive.ubuntu.com/releases/focal/
-release-20210921/)
+* I have downloaded ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img image from [cloud-images](http://cloud-images-archive.ubuntu.com/releases/focal/release-20210921/)
 * You may use the same or select any other cloud image from the Ubuntu Focal release.
 
 ```
