@@ -15,7 +15,8 @@
 ![Logical Design](./images/logical_design.png)
 
 ## Physical Design
-![Physical Design](./images/physical_design.png)
+![Physical Design-with-ceph-osd](./images/physical_design.png)
+![Physical Design-with-ceph-osd-fs](./images/physical_design_ceph_fs.png)
 
 ## Deployment Sequence
 * It is expected that the control-host is up and running, has internet access and is ready to host KVM VMs.
@@ -378,11 +379,45 @@ maas admin tags create name=ceph-node-3 comment='ceph-node-3'
 SYSID=$(maas admin machines read | jq '.[] | select(."hostname"=="ceph-node-3")| .["system_id"]' | tr -d '"')
 maas admin tag update-nodes "ceph-node-3" add=$SYSID
 ```
+### Creating Ceph-FS Machine 
+
+```
+for i in   ceph_fs_1_disk_1
+do
+qemu-img create -f qcow2 /var/lib/libvirt/images/${i}.qcow2 500G
+done
+
+for i in   ceph_fs_1 
+do
+virt-install --ram 8192 --vcpus 8 --os-variant ubuntu20.04  --disk path=/var/lib/libvirt/images/${i}_disk_1.qcow2,device=disk,bus=virtio,format=qcow2 --graphics vnc,listen=0.0.0.0 --network bridge=br-ctrplane  --boot=network,hd --name ${i} --cpu Nehalem,+vmx --dry-run --print-xml > /tmp/${i}.xml; virsh define --file /tmp/${i}.xml
+done 
+
+virsh domiflist ceph_fs_1
+```
+### Registering Ceph-FS VM in MaaS
+
+```
+maas admin machines create \
+hostname=ceph-fs-1 \
+architecture=amd64 \
+mac_addresses=<mac address> \
+power_type=virsh \
+power_parameters_power_id=ceph_fs_1 \
+power_parameters_power_address=qemu+ssh://devops@<control host ip>/system \
+power_parameters_power_pass=<password>
+
+
+maas admin tags create name=ceph-fs-1 comment='ceph-fs-1'
+SYSID=$(maas admin machines read | jq '.[] | select(."hostname"=="ceph-fs-1")| .["system_id"]' | tr -d '"')
+maas admin tag update-nodes "ceph-fs-1" add=$SYSID
+```
 
 ### Deployment of Charmed K8s
 * The last step is to deploy Charmed K8s.
 * I have created a bundle file i.e "k8s_no_api_lbr.yml"  for this deployment.
+* Above named bundle file also  covers cehp block storage deployment as well. 
 * Take note of the tags and machine numbering in the bundle file, as well as how they are referred for application deployments.
+* I have also added a bundle file to cover ceph-fs use case alongwith ceph blockstorage (k8s_no_api_lbr_ceph_osd_fs.yml)
 ```
 juju deploy ./k8s_no_api_lbr.yml
 ```
