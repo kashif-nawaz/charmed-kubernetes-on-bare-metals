@@ -2,9 +2,9 @@
 ## Problem Statement 
 * NFVI/ teclo cloud solutions have been traditionally designed with virtual machine-based solutions and virtual machine-based network functions (NF) are called VNFs (e.g. vEPC , vIMS, vBNG). 
 * This approach worked well for quite some time until NF vendors started adapting containerized technologies and container-based network fucntions are called CNF.
-Many telecom providers have adapted the containerized network functions model and used their IaaS projects (e.g., Opnestack or VMWare-based ) for CNF nested deployment over VMs.
+* Many telecom providers have adapted the containerized network functions model and used their IaaS projects (e.g., Opnestack or VMWare-based ) for CNF nested deployment over VMs.
 * Main projects for handling the infrastructure requirements of CNFs are ( Kubernetees, also known as K8s and Redhat Openshift which is again based on k8s).
-*  Deploying nested containers inside VMs introduce some more challenges (e.g performance concerns  and  extension of multiple interfaces to the  containerized network functions, with requriments of one interface for control plane functionality and one or more interfaces for data-plane functionality).
+* Deploying nested containers inside VMs introduce some more challenges (e.g performance concerns  and  extension of multiple interfaces to the  containerized network functions, with requriments of one interface for control plane functionality and one or more interfaces for data-plane functionality).
 ## Solution
 * To resolve challenges that are centered around performance, K8s or Openshift have to be installed on baremetal servers.
 * To resolve network challenges, Multus (aka Meta CNI) should be used, which can work with any CNI (e.g., Flanel or Calico to provide control plane interface) and use SRIOV virtual functions for data plane interfaces. 
@@ -97,7 +97,7 @@ qemu-img create -b /home/devops/maas/ubuntu-20.04-server-cloudimg-amd64-disk-kvm
 virt-install --name maas \
   --virt-type kvm --memory 4096  --vcpus 4 \
   --boot hd,menu=on \
-  --disk path=/home/contrail/maas/cloud_init.img,device=cdrom \
+  --disk path=/home/devops/maas/cloud_init.img,device=cdrom \
   --disk path=/var/lib/libvirt/images/maas.qcow2,device=disk \
   --graphics vnc \
   --os-type=Linux \
