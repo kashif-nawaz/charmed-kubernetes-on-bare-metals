@@ -415,7 +415,7 @@ maas admin tag update-nodes "ceph-fs-1" add=$SYSID
 ### Deployment of Charmed K8s
 * The last step is to deploy Charmed K8s.
 * I have created a bundle file i.e "k8s_no_api_lbr.yml"  for this deployment.
-* Above named bundle file also  covers cehp block storage deployment as well. 
+* Above named bundle file also  covers ceph block storage deployment. 
 * Take note of the tags and machine numbering in the bundle file, as well as how they are referred for application deployments.
 * I have also added a bundle file to cover ceph-fs use case alongwith ceph blockstorage (k8s_no_api_lbr_ceph_osd_fs.yml)
 ```
