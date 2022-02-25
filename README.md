@@ -1,6 +1,6 @@
 # charmed-kubernetes-on-bare-metals
 ## Problem Statement 
-* NFVI/ teclo cloud solutions have been traditionally designed with virtual machine-based solutions and virtual machine-based network functions (NF) are called VNFs (e.g. vEPC , vIMS, vBNG). 
+* NFVI/ telco cloud solutions have been traditionally designed with virtual machine-based solutions and virtual machine-based network functions (NF) are called VNFs (e.g. vEPC , vIMS, vBNG). 
 * This approach worked well for quite some time until NF vendors started adapting containerized technologies and container-based network fucntions are called CNF.
 * Many telecom providers have adapted the containerized network functions model and used their IaaS projects (e.g., Opnestack or VMWare-based ) for CNF nested deployment over VMs.
 * Main projects for handling the infrastructure requirements of CNFs are ( Kubernetees, also known as K8s and Redhat Openshift which is again based on k8s).
