@@ -437,3 +437,17 @@ juju ssh 3 kubectl get pods --all-namespaces
 ```
 * If anyone knows the solution to the above issue and willing to share, then you may contact me at "kashif-nawaz@outlook.com".
 * If anyone wants to collaborate with me on this project or the next one, which is "Adding Multus Meta CNI with SRIOV on Baremetal Charmed K8s" then you may  contact me at above given email address.
+### Upgrade to K8s 1.24v
+* k8s 1.23v has some issues wiht Multus deployment which got fixed in k8s 1.24v.
+* Instructions to upgrade exsisting k8s 1.23v cluser to  1.24v are available at [upgradde-to-k8s-1.24v](https://ubuntu.com/kubernetes/docs/1.24/upgrading)
+### Fresh Installation of K8s 1.24v
+* Please use bundle file (canonical_k8s_1.24.yml)
+* During fresh installation, please montior /var/logs/juju/machine-x.log in controller node and look for following error.
+```
+2022-06-15 12:54:52 WARNING juju.container-setup container_initialisation.go:139 not stopping machine agent container watcher due to error: setting up container dependencies on host machine: Network not found
+2022-06-15 12:54:52 ERROR juju.container-setup container_initialisation.go:118 starting container provisioner for lxd: setting up container dependencies on host machine: Network not found
+```
+* Fix for above issue is given below [lxd-issue](https://bugs.launchpad.net/juju/+bug/1969470)
+```
+juju model-config lxd-snap-channel=4.24/stable
+```

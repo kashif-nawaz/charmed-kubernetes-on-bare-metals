@@ -1,0 +1,129 @@
+series: focal
+applications:
+  ceph-fs:
+    charm: ceph-fs
+    channel: stable
+    revision: 36
+    num_units: 1
+    to:
+    - "6"
+  ceph-mon:
+    charm: ceph-mon
+    channel: stable
+    revision: 73
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+  ceph-osd:
+    charm: cs:ceph-osd
+    channel: stable
+    revision: 316
+    num_units: 3
+    to:
+    - "0"
+    - "1"
+    - "2"
+    options:
+      osd-devices: /dev/vdb
+  containerd:
+    charm: containerd
+    channel: 1.24/stable
+    revision: 14
+  easyrsa:
+    charm: easyrsa
+    channel: 1.24/stable
+    revision: 9
+    num_units: 1
+    to:
+    - lxd:3
+  etcd:
+    charm: etcd
+    channel: 1.24/stable
+    revision: 691
+    num_units: 1
+    to:
+    - "3"
+    options:
+      channel: 3.4/stable
+  flannel:
+    charm: flannel
+    channel: 1.24/stable
+    revision: 17
+  kubernetes-control-plane:
+    charm: kubernetes-control-plane
+    channel: 1.24/stable
+    revision: 152
+    num_units: 1
+    to:
+    - "3"
+    expose: true
+    options:
+      channel: 1.24/stable
+      default-storage: cephfs
+      service-cidr: 10.96.0.0/12
+  kubernetes-worker:
+    charm: kubernetes-worker
+    channel: 1.24/stable
+    revision: 27
+    num_units: 2
+    to:
+    - "4"
+    - "5"
+    options:
+      channel: 1.24/stable
+  ntp:
+    charm: cs:ntp
+    channel: stable
+    revision: 47
+machines:
+  "0":
+    constraints: tags=ceph-node-1
+  "1":
+    constraints: tags=ceph-node-2
+  "2":
+    constraints: tags=ceph-node-3
+  "3":
+    constraints: tags=master
+  "4":
+    constraints: tags=worker1
+  "5":
+    constraints: tags=worker2
+  "6":
+    constraints: tags=ceph-fs-1
+relations:
+- - ceph-osd:mon
+  - ceph-mon:osd
+- - kubernetes-control-plane:kube-api-endpoint
+  - kubernetes-worker:kube-api-endpoint
+- - kubernetes-control-plane:kube-control
+  - kubernetes-worker:kube-control
+- - kubernetes-control-plane:certificates
+  - easyrsa:client
+- - kubernetes-control-plane:etcd
+  - etcd:db
+- - kubernetes-worker:certificates
+  - easyrsa:client
+- - etcd:certificates
+  - easyrsa:client
+- - ceph-mon:client
+  - kubernetes-control-plane:ceph-client
+- - kubernetes-control-plane:juju-info
+  - ntp:juju-info
+- - kubernetes-worker:juju-info
+  - ntp:juju-info
+- - ceph-osd:juju-info
+  - ntp:juju-info
+- - flannel:cni
+  - kubernetes-control-plane:cni
+- - flannel:cni
+  - kubernetes-worker:cni
+- - flannel:etcd
+  - etcd:db
+- - containerd:containerd
+  - kubernetes-worker:container-runtime
+- - containerd:containerd
+  - kubernetes-control-plane:container-runtime
+- - ceph-fs:ceph-mds
+  - ceph-mon:mds
