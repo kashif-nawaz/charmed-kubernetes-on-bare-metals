@@ -434,12 +434,12 @@ juju deploy ./k8s_no_api_lbr.yml
 * Fix for above issue is given below [lxd-issue](https://bugs.launchpad.net/juju/+bug/1969470)
 ```
 juju model-config lxd-snap-channel=4.24/stable
-``
-
+```
 ### Verfication 
 * Wait until you get the message "Deploy of bundle completed."
 * To monitor the deployment status, "watch -c juju status --color" 
 * Once all of the applications have been deployed, log in to the K8s controller and check the cluster status.
+
 ```
 ubuntu@master:~$ kubectl version --short
 Client Version: v1.24.1
