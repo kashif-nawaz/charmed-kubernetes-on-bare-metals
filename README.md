@@ -421,22 +421,6 @@ maas admin tag update-nodes "ceph-fs-1" add=$SYSID
 ```
 juju deploy ./k8s_no_api_lbr.yml
 ```
-* Wait until you get the message "Deploy of bundle completed."
-* To monitor the deployment status, "watch -c juju status --color" 
-* Once all of the applications have been deployed, log in to the K8s controller and check the cluster status.
-```
-juju ssh 3 kubectl cluster-info 
-juju ssh 3 kubectl get nodes 
-juju ssh 3 kubectl get pods -n kube-system
-juju ssh 3 kubectl get pods --all-namespaces 
-```
-* I have also created a k8s_api_lbr.yml bundle file which deploys kubeapi-loadbalancer as well, but I was getting the following error.
-```
- 2022-02-20 00:30:35 WARNING unit.kubernetes-master/0.certificates-relation-changed logger.go:60 ERROR cannot open 6443/tcp (unit "kubernetes-master/0"): port range conflicts with 6443/tcp (unit "kubeapi-load-balancer/0")
- cannot open 6443/tcp (unit "kubeapi-load-balancer/1"): port range conflicts with 6443/tcp (unit "kubernetes-master/0")
-```
-* If anyone knows the solution to the above issue and willing to share, then you may contact me at "kashif-nawaz@outlook.com".
-* If anyone wants to collaborate with me on this project or the next one, which is "Adding Multus Meta CNI with SRIOV on Baremetal Charmed K8s" then you may  contact me at above given email address.
 ### Upgrade to K8s 1.24v
 * k8s 1.23v has some issues wiht Multus deployment which got fixed in k8s 1.24v.
 * Instructions to upgrade exsisting k8s 1.23v cluser to  1.24v are available at [upgradde-to-k8s-1.24v](https://ubuntu.com/kubernetes/docs/1.24/upgrading)
@@ -450,4 +434,32 @@ juju ssh 3 kubectl get pods --all-namespaces
 * Fix for above issue is given below [lxd-issue](https://bugs.launchpad.net/juju/+bug/1969470)
 ```
 juju model-config lxd-snap-channel=4.24/stable
+``
+
+### Verfication 
+* Wait until you get the message "Deploy of bundle completed."
+* To monitor the deployment status, "watch -c juju status --color" 
+* Once all of the applications have been deployed, log in to the K8s controller and check the cluster status.
 ```
+ubuntu@master:~$ kubectl version --short
+Client Version: v1.24.1
+Kustomize Version: v4.5.4
+Server Version: v1.24.1
+ubuntu@master:~$ kubectl get nodes
+NAME      STATUS   ROLES    AGE   VERSION
+master    Ready    <none>   18h   v1.24.1
+worker1   Ready    <none>   18h   v1.24.1
+worker2   Ready    <none>   18h   v1.24.1
+kubectl get pods -n kube-system
+kubectl cluster-info
+kubectl get pods -n kube-system
+kubectl get pods --all-namespaces
+```
+### NOTE
+* I have also created a k8s_api_lbr.yml bundle file which deploys kubeapi-loadbalancer as well, but I was getting the following error.
+```
+ 2022-02-20 00:30:35 WARNING unit.kubernetes-master/0.certificates-relation-changed logger.go:60 ERROR cannot open 6443/tcp (unit "kubernetes-master/0"): port range conflicts with 6443/tcp (unit "kubeapi-load-balancer/0")
+ cannot open 6443/tcp (unit "kubeapi-load-balancer/1"): port range conflicts with 6443/tcp (unit "kubernetes-master/0")
+```
+* If anyone knows the solution to the above issue and willing to share, then you may contact me at "kashif-nawaz@outlook.com".
+* If anyone wants to collaborate with me on this project or the next one, which is "Adding Multus Meta CNI with SRIOV on Baremetal Charmed K8s" then you may  contact me at above given email address.
